@@ -1,0 +1,940 @@
+swagger: '2.0'
+info:
+  description: >
+
+    The application programming interface for software partners (Software
+    Partner API) allows communication with an eBill Network Partner.
+
+
+    The eBill service comprises of electronic bills, reminders, credit notes and
+    advices which are summarized under the term "business case". Business cases
+    are delivered from software partners via network partners to the SIX eBill
+    infrastructure and can be received online by bill recipients.
+
+
+    Documentation of the Software Partner API comprises of three parts:
+
+
+    *Handbook for software partners*
+
+    Business-level description targeting product and IT management.
+
+
+    *Software Partner API documentation*
+
+    Technical description targeting IT architects and developers.
+
+
+    *OpenAPI Specification*
+
+    Technical specification of the interface for developers and code generators.
+
+
+    ### General Note
+
+
+    SWICO reserves the right to amend this documentation as required within the
+    scope of the applicable contractual conditions.
+
+
+    All rights are reserved with respect to this documentation, including with
+    regard to photocopying and storage on electronic media as well as
+    translation into foreign languages.
+
+
+    This documentation has been compiled with the greatest care, but may
+    nevertheless contain errors or inaccuracies. SWICO cannot assume any legal
+    responsibility or any liability for erroneous information or its
+    consequences.
+
+
+    If you notice any errors in this documentation or have any suggestions for
+    improvements, we would be grateful to receive your feedback.
+
+
+    *Contact*
+     SWICO
+  version: 1.0.0-alpha
+  title: Software Partner API v1
+  contact:
+    name: SWICO Support
+    email: support@swico.com
+    url: 'https://www.swico.ch'
+host: api.swico.ch
+basePath: /api/swico/softwarepartner/v1
+tags:
+  - name: biller
+    description: >
+      **Biller Management**
+
+      All operations that are associated with the current biller are located within the
+      biller resource, including the creation of business cases.
+  - name: events
+    description: >
+      **Notification Events**
+
+      The event resource allows the software partner to retrieve changes for the
+      event type 'Subscription status changes'.
+  - name: healthcheck
+    description: >
+      **System Healthcheck**
+
+      This allows to check the basic state of the system (can it be reached,
+      does authentication and auhorization work, does it respond).
+
+      As some infrastructures block certain HTTP methods by default, the
+      healthcheck allows to test if all required methods (GET, POST, PUT,
+      DELETE) work across all layers.
+schemes:
+  - https
+paths:
+  '/biller/bill-recipients/search':
+    parameters:
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    post:
+      tags:
+        - biller
+      summary: Search for bill recipients for this biller
+      description: >
+        Returns a list of one or more bill recipients.
+
+        The response will only list a bill recipient if he allows bills to be
+        posted by the biller or allows bills to be posted in general.
+
+        The call will return an empty list if no matching bill recipient is
+        found or the biller is not allowed to send bills to the bill recipient.
+      operationId: searchBillRecipientsForBiller
+      parameters:
+        - in: body
+          name: body
+          description: >-
+            Parameters for the search, at least one of the parameters is
+            required
+          required: true
+          schema:
+            $ref: '#/definitions/BillRecipientsForBillerSearch'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Bill recipients found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BillRecipientsForBillerSearch'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+  '/biller/business-cases':
+    parameters:
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+      - $ref: '#/parameters/header_xFilename'
+    post:
+      tags:
+        - biller
+      summary: Create business case in PDF/A-3b-format
+      operationId: createBusinessCase
+      description: >
+        The creation of a business case in PDF/A-3b format works with a simple
+        POST request where the PDF is the binary payload of the request. Note
+        that only one PDF can be submitted at a time.
+
+        Validation of the submitted data will take place immediately and the
+        response either confirms the successful creation of the business case or
+        contains the error details of the validation.
+
+        Technical Hint:
+
+        Note that this POST operation is not officially supported by the
+        specification language 'OAS 2.0' ('Swagger 2.0') as described in detail
+        here -> 'https://swagger.io/docs/specification/2-0/file-upload/'
+      consumes:
+        - application/pdf
+      parameters:
+        - in: body
+          name: body
+          description: PDF as binary data with attached file for structured data 
+          required: true
+          schema:
+            type: string
+            format: binary
+      produces:
+        - application/json
+      responses:
+        '201':
+          description: Business case created
+          schema:
+            $ref: '#/definitions/BusinessCaseId'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+  '/biller/business-cases/{businessCaseId}':
+    parameters:
+      - $ref: '#/parameters/path_businessCaseId'
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    get:
+      tags:
+        - biller
+      summary: Get business case
+      description: >
+        Depending on the accept header, this operation either returns a JSON
+        business case object or the original PDF.
+
+        The returned JSON object contains one of the business case subtypes: 
+        Bill, InstalmentBill, Reminder, CreditNote or Advice.
+      operationId: getBusinessCase
+      produces:
+        - application/json
+        - application/pdf
+      responses:
+        '200':
+          description: Business case found
+          schema:
+            $ref: '#/definitions/BusinessCase'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+  /events/business-case-status-changed:
+    parameters:
+      - $ref: '#/parameters/query_lastEventId'
+      - $ref: '#/parameters/query_limitEvents'
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    get:
+      tags:
+        - events
+      summary: 'Find events for business cases which changed status'
+      description: 'Events for status changes of bills, advices, credit notes and reminders.'
+      operationId: findBusinessCaseStatusChangedEvents
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Business case status changed events found'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BusinessCaseStatusChangedEvent'
+        'default':
+          description: 'See section Error Handling of the Network Partner API documentation for further details about errors and error handling.'
+          schema:
+            $ref: '#/definitions/Problem'
+  /events/bill-recipient-subscription-status-changed:
+    parameters:
+      - $ref: '#/parameters/query_lastEventId'
+      - $ref: '#/parameters/query_limitEvents'
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    get:
+      tags:
+        - events
+      summary: Find events for bill recipient subscriptions which changed status
+      description: >
+        More information about the subscription process can be found in
+        <<Subscriptions and Subscription Cancellations>>.
+      operationId: findBillRecipientSubscriptionStatusChangedEvents
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Bill recipient subscription changed events found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BillRecipientSubscriptionStatusChangedEvent'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+  /healthcheck:
+    parameters:
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    get:
+      tags:
+        - healthcheck
+      summary: Health check using GET method
+      description: Returns a status message of the system.
+      operationId: healthCheckForGet
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Healthcheck successful
+          schema:
+            $ref: '#/definitions/HealthCheckResponse'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+    post:
+      tags:
+        - healthcheck
+      summary: Health check using POST method
+      description: Returns the request body. This operation will not modify the system.
+      operationId: healthCheckForPost
+      parameters:
+        - in: body
+          name: body
+          description: Any message which is expected in the response
+          required: true
+          schema:
+            $ref: '#/definitions/HealthCheckRequest'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Healthcheck successful
+          schema:
+            $ref: '#/definitions/HealthCheckResponse'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+    put:
+      tags:
+        - healthcheck
+      summary: Health check using PUT method
+      description: Returns the request body. This operation will not modify the system.
+      operationId: healthCheckForPut
+      parameters:
+        - in: body
+          name: body
+          description: Any message which is expected in the response
+          required: true
+          schema:
+            $ref: '#/definitions/HealthCheckRequest'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Healthcheck successful
+          schema:
+            $ref: '#/definitions/HealthCheckResponse'
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+    delete:
+      tags:
+        - healthcheck
+      summary: Health check using DELETE method
+      description: >-
+        Returns without further content. This operation will not modify the
+        system.
+      operationId: healthCheckForDelete
+      responses:
+        '204':
+          description: Healthcheck successful
+        default:
+          description: >-
+            See section Error Handling of the Software Partner API documentation
+            for further details about errors and error handling.
+          schema:
+            $ref: '#/definitions/Problem'
+securityDefinitions:
+  oauth2_cc:
+    type: oauth2
+    description: OAuth2 based authentication with client credentials.
+    flow: application
+    scopes:
+      default-biller: default scope for biller
+    tokenUrl: 'https://api.swico.com/auth/oauth/token'
+parameters:
+  path_billerId:
+    name: billerId
+    in: path
+    type: string
+    description: |
+      biller id
+      **Maximal length**: `14`
+      **Example**: `"BIID0000123456"`
+      **Pattern**: `BIID[0-9]{10}`
+    required: true
+    maxLength: 14
+    pattern: 'BIID[0-9]{10}'
+  path_businessCaseId:
+    name: businessCaseId
+    in: path
+    type: string
+    description: |
+      business case id
+      **Maximal length**: `39`
+      **Example**: `"NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9"`
+      **Pattern**: `NWPBCID[0-9A-Z]{32}`
+    required: true
+    pattern: 'NWPBCID[0-9A-Z]{32}'
+    maxLength: 39
+  query_lastEventId:
+    name: lastEventId
+    in: query
+    type: string
+    maxLength: 39
+    pattern: 'NWPD
+    D[0-9A-Z]{32}'
+    description: >
+      Id of the last received event. If omitted, the result starts with the
+      oldest available event.
+
+      **Example**: `"NWPEVID82A65938766547EBBBA39BA6F7B07F24"`
+
+      **Maximal length**: `39`
+
+      **Pattern**: `"NWPEVID[0-9A-Z]{32}"`
+  query_limitEvents:
+    name: limit
+    in: query
+    type: integer
+    description: >-
+      maximum number of events one wants to receive (technical maximum is 10000,
+      no more will be returned at once and you have to fetch again to check if
+      there are more)
+    maximum: 10000
+    default: 1000
+  header_xCorrelationId:
+    name: X-CORRELATION-ID
+    in: header
+    type: string
+    minLength: 1
+    maxLength: 36
+    required: true
+    description: |
+      ID which will unambiguously identify this request to the API.
+      **Minimal length**: `1`
+      **Maximal length**: `36`
+  header_authorization:
+    name: Authorization
+    in: header
+    type: string
+    required: true
+    description: |
+      OAuth 2.0 client credentials Access-Token with the prefix "Bearer".
+  header_xFilename:
+    name: X-FILENAME
+    in: header
+    type: string
+    minLength: 1
+    maxLength: 99
+    required: false
+    description: >
+      Filename for the business case PDF. This is only used for analytical
+      purposes and support. The filename is not visible for the bill recipient.
+
+      **Minimal length**: `1`
+
+      **Maximal length**: `99`
+responses:
+  BadRequest:
+    description: bad request
+    schema:
+      $ref: '#/definitions/Problem'
+  Unauthorized:
+    description: unauthorized
+    schema:
+      $ref: '#/definitions/Problem'
+  Forbidden:
+    description: forbidden
+    schema:
+      $ref: '#/definitions/Problem'
+  NotFound:
+    description: the specified resource was not found
+    schema:
+      $ref: '#/definitions/Problem'
+definitions:
+  Address:
+    type: object
+    required:
+      - streetName
+      - postalCode
+      - city
+      - countryCode
+    properties:
+      streetName:
+        type: string
+        description: street name
+        example: Neustadtstrasse
+        minLength: 1
+        maxLength: 70
+      buildingNumber:
+        type: string
+        description: building number
+        example: 20a
+        minLength: 1
+        maxLength: 16
+      postalCode:
+        type: string
+        description: postal code
+        example: '6025'
+        minLength: 1
+        maxLength: 9
+      city:
+        type: string
+        description: city name
+        example: Neudorf
+        minLength: 1
+        maxLength: 35
+      countryCode:
+        type: string
+        description: in format ISO 3166-1 alpha 2
+        example: CH
+        maxLength: 2
+        pattern: '[A-Z]{2}'
+  BillRecipientsForBillerSearch:
+    type: object
+    properties:
+      emailAddress:
+        type: string
+        description: email address of the bill recipient
+        example: peter@muster.ch
+        minLength: 1
+        maxLength: 256
+        format: email
+      billRecipientId:
+        type: string
+        description: id of the bill recipient
+        example: '41010560425610173'
+        minLength: 1
+        maxLength: 17
+        pattern: '([0-9])*'
+      enterpriseIdentificationNumber:
+        type: string
+        description: >
+          Swiss enterprise identification number (UID) without dashes, dots or
+          extension.
+
+          Note that this has to contain the swiss enterprise identification
+          number (UID) from the commercial register (Handelsregister) which may
+          be different from the VAT UID (Mehrwertsteuer UID).
+        maxLength: 12
+        pattern: 'CHE[0-9]{9}'
+        example: CHE123456789
+  BillRecipientSubscription:
+    type: object
+    required:
+      - billRecipient
+    properties:
+      billRecipient:
+        $ref: '#/definitions/BillRecipient'
+      accountNumber:
+        type: string
+        maxLength: 21
+        description: >-
+          Account number of the biller (e.g. iban), if provided from the
+          financial institution
+      esrReference:
+        type: string
+        description: 'ESR reference number, if provided from the financial institution'
+        minLength: 16
+        maxLength: 27
+        example: '123456123456789012345678901'
+        pattern: '([0-9])*'
+  BillRecipient:
+    type: object
+    required:
+      - billRecipientId
+      - type
+      - name
+      - correspondenceLanguage
+      - address
+    properties:
+      emailAddress:
+        type: string
+        description: email address of the bill recipient
+        example: peter@muster.ch
+        minLength: 1
+        maxLength: 256
+        format: email
+      billRecipientId:
+        type: string
+        description: id of the bill recipient
+        example: '41010560425610173'
+        minLength: 1
+        maxLength: 17
+        pattern: '([0-9])*'
+      enterpriseIdentificationNumber:
+        type: string
+        description: >
+          Swiss enterprise identification number (UID) without dashes, dots or
+          extension.
+
+          Note that this has to contain the swiss enterprise identification
+          number (UID) from the commercial register (Handelsregister) which may
+          be different from the VAT UID (Mehrwertsteuer UID).
+        maxLength: 12
+        pattern: 'CHE[0-9]{9}'
+        example: CHE123456789
+      type:
+        type: string
+        description: the type of the bill recipient
+        enum:
+          - PRIVATE
+          - COMPANY
+      name:
+        type: string
+        description: |
+          last name, if private bill recipient
+          company name, if company bill recipient
+        example: 'for private bill recipient: Muster, for company name: Muster AG'
+        minLength: 1
+        maxLength: 70
+      firstName:
+        type: string
+        description: |
+          first name, if private bill recipient
+          empty, if company bill recipient
+        example: Peter
+        maxLength: 35
+      correspondenceLanguage:
+        type: string
+        description: language for correspondence with this bill recipient ISO-639-2/B
+        minLength: 1
+        maxLength: 3
+        example: ger
+      address:
+        $ref: '#/definitions/Address'
+  BusinessCase:
+    discriminator: type
+    required:
+      - id
+      - type
+      - billerId
+      - referenceNumber
+      - businessCaseDate
+      - totalAmount
+    type: object
+    description: the abstract business case object containing the shared properties
+    properties:
+      id:
+        description: >-
+          A unique id for this business case. Property must not be given when
+          creating a new business case.
+        type: string
+        maxLength: 39
+        pattern: 'NWPBCID[0-9A-Z]{32}'
+        example: 'NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9'
+      type:
+        type: string
+        description: |
+          the type of the business case
+        enum:
+          - Bill
+          - InstalmentBill
+          - Advice
+          - CreditNote
+          - Reminder
+      referenceNumber:
+        description: >
+          A business case reference given by the biller.
+
+          Must be unique within the urrent biller for 90 days, calculated from the due date. 
+          Old invoice numbers can then be recycled.
+        type: string
+        minLength: 1
+        maxLength: 120
+        example: 2019-123456-22
+      referencedBill:
+        $ref: '#/definitions/ReferencedBill'
+      businessCaseDate:
+        description: >
+          The business case date (ISO-8601 format), can not be more than 90 days
+          in the past on the date it was created. Cannot be in the future.
+        type: string
+        minLength: 1
+        maxLength: 10
+        format: date
+        example: '2018-12-22'
+      status:
+        type: string
+        description: the status of the business case
+        enum:
+          - INITIAL
+          - OPEN
+          - APPROVED
+          - REJECTED
+          - COMPLETED
+      totalAmount:
+        $ref: '#/definitions/AmountWithCurrency'
+  ReferencedBill:
+    type: object
+    required:
+      - referenceNumber
+    description: |
+      The business case can only bills or instalment bills.
+    properties:
+      businessCaseId:
+        type: string
+        description: business case id
+        maxLength: 39
+        pattern: 'NWPBCID[0-9A-Z]{32}'
+        example: 'NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9'
+      referenceNumber:
+        description: >
+          Must be unique for 90 days, calculated from the due date, together
+          with the billerId. Old invoice numbers can then be recycled.
+        type: string
+        minLength: 1
+        maxLength: 120
+        example: 2018-123456-22
+  BusinessCaseId:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        description: >-
+          A unique id for business cases on the NWP. Property must not be given when
+          creating a new business case.
+        type: string
+        maxLength: 39
+        pattern: 'NWPBCID[0-9A-Z]{32}'
+        example: 'NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9'
+  Event:
+    type: object
+    required:
+      - eventId
+      - timestamp
+    description: contains common fields for all events
+    properties:
+      eventId:
+        type: string
+        description: event id
+        example: NWPEVID82A65938766547EBBBA39BA6F7B07F24
+        maxLength: 39
+        pattern: 'NWPEVID[0-9A-Z]{32}'
+      timestamp:
+        type: string
+        description: timestamp of the event
+        minLength: 1
+        format: date-time
+        example: '2019-01-01T10:00:00.000Z'
+  AmountWithCurrency:
+    type: object
+    required:
+      - value
+      - currencyCode
+    properties:
+      value:
+        description: >
+          The amount value. Take care when using JavaScript libraries to parse
+          this value - it should be treated as a financial amount and therefore
+          not as a floating point number but rather using a precise decimal
+          representation (like BigDecimal in Java).
+
+          **Maximum value**: `99'999'999.99`
+          **Maximal length**: `10`
+        type: number
+        example: 99.99
+      currencyCode:
+        description: |
+          The amount currency code according to ISO-4217.
+        type: string
+        example: CHF
+        maxLength: 3
+        pattern: '[A-Z]{3}'
+  BusinessCaseStatusChangedEvent:
+    type: object
+    required:
+      - businessCaseId
+      - newStatus
+    description: |
+      An Event describing the status change of a business case
+      These events are sent for bills, reminders, advices and credit notes.
+      The approved amount is only provided for the status APPROVED.
+    allOf:
+      - $ref: '#/definitions/Event'
+      - properties:
+          businessCaseId:
+            type: string
+            description: 'business case id'
+            maxLength: 39
+            pattern: 'NWPBCID[0-9A-Z]{32}'
+            example: 'NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9'
+          newStatus:
+            type: string
+            description: 'the new status of the business case'
+            enum:
+              - INITIAL
+              - OPEN
+              - APPROVED
+              - REJECTED
+              - COMPLETED
+          approvedAmount:
+            $ref: '#/definitions/AmountWithCurrency'
+  BillRecipientSubscriptionStatusChangedEvent:
+    type: object
+    required:
+      - newStatus
+    description: An Event describing the status change of a bill recipient subscription.
+    allOf:
+      - $ref: '#/definitions/Event'
+      - $ref: '#/definitions/BillRecipientSubscription'
+      - properties:
+          newStatus:
+            type: string
+            description: >-
+              the new status of the bill recipient subscription, currently only
+              REQUESTED and INACTIVE are used, see <<Subscriptions and
+              Subscription Cancellations>> for further information
+            enum:
+              - INACTIVE
+              - REQUESTED
+              - ACTIVE
+  Problem:
+    type: object
+    properties:
+      type:
+        type: string
+        format: uri
+        description: >
+          An absolute URI that identifies the problem type.
+
+          We may provide human-readable documentation for the problem type in
+          the future, when the URI is dereferenced.
+
+          For now consult the Soatware Partner API documentation for further
+          information.
+
+          The URI consists of the /problems endpoint and the documented problem
+          type, see example.
+        default: 'about:blank'
+        example: /problems/REQUEST_BODY_VALIDATION_FAILED
+      title:
+        type: string
+        description: |
+          A short, human readable summary of the problem type.
+        example: Payload has missing or invalid values
+      status:
+        type: integer
+        format: int32
+        description: >
+          The HTTP status code generated by the origin server for this
+          occurrence
+
+          of the problem.
+        minimum: 100
+        maximum: 600
+        exclusiveMaximum: true
+        example: 400
+      detail:
+        type: string
+        description: |
+          A human readable explanation specific to this occurrence of the
+          problem.
+        example: >-
+          The submitted request contains invalid or missing data which can not
+          be processed.
+      instance:
+        type: string
+        format: uri
+        description: >
+          An absolute URI that identifies the specific occurrence of the
+          problem.
+
+          It may or may not yield further information if dereferenced.
+        example: >-
+          /api/swico/softwarepartner/v1/biller/errors/BCID0090000001/provided-X-CORRELATION-ID
+      technicalReason:
+        type: string
+        description: >
+          The Technical Description/Reason for engineers might contain addition
+          system information on the problem.
+        example: Some field validations failed
+      fieldErrors:
+        type: array
+        items:
+          type: object
+          properties:
+            fieldName:
+              type: string
+              description: the name of the field with the error
+              example: localizedData.ger.address.city
+            message:
+              type: string
+              description: the message describing the error
+              example: size must be between 1 and 35
+            rejectedValue:
+              type: string
+              description: the provided value which was rejected if available
+              example: Very Long Invalid City Name Which Is Rejected
+  HealthCheckRequest:
+    type: object
+    required:
+      - message
+    properties:
+      message:
+        type: string
+        description: expected response message from health check
+        example: any string
+        minLength: 1
+        maxLength: 100
+  HealthCheckResponse:
+    type: object
+    required:
+      - message
+      - requestDateTime
+      - receivedHeaders
+      - environmentStage
+      - applicationVersion
+      - apiVersion
+    properties:
+      message:
+        type: string
+        description: response message from health check
+        example: The healthcheck GET request was successfully received and processed
+        maxLength: 100
+      requestDateTime:
+        type: string
+        description: according to RFC3339, section 5.6 in ISO 8601 with timezone and milliseconds
+        format: date-time
+        example: '2018-10-03T16:03:09.101+02:00'
+      receivedHeaders:
+        type: array
+        items:
+          type: object
+          properties:
+            headerName:
+              type: string
+              description: the name of the provided header
+              example: X-CORRELATION-ID
+            headerValue:
+              type: string
+              description: As received
+              example: 9bcd4351-4b7b-4017-9b63-9613414c6ff1
+      environmentStage:
+        type: string
+        description: the instance which the request was sent to
+        example: XE
+      applicationVersion:
+        type: string
+        description: the version of the server application  at network partner
+        example: 1.4.3.0-desire-20180927091004161-71-5e3ca91
+      apiVersion:
+        type: string
+        description: the version of the software partner api
+        example: 1.0.23
