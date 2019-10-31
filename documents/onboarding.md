@@ -17,7 +17,7 @@ the client software with its initial parameters:
     "tokenUrlParams": { "xyz": "abc" }
   },
   "apiUrl": "https://api.mynwp.ch/api/ebill",
-  "billerPid": "41..."
+  "billerPid": "41100012345678901"
 }
 ```
 
