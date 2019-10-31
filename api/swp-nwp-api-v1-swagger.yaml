@@ -65,9 +65,9 @@ tags:
 schemes:
   - https
 paths:
-  '/billers/{billerId}/bill-recipients/search':
+  '/billers/{billerPID}/bill-recipients/search':
     parameters:
-      - $ref: '#/parameters/path_billerId'
+      - $ref: '#/parameters/path_billerPID'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
     post:
@@ -109,59 +109,14 @@ paths:
             for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
-  '/billers/{billerId}/bill-recipients/bulk-search':
+  '/billers/{billerPID}/business-cases':
     parameters:
-      - $ref: '#/parameters/path_billerId'
-      - $ref: '#/parameters/header_authorization'
-      - $ref: '#/parameters/header_xCorrelationId'
-    post:
-      tags:
-        - billers
-      summary: Search for several bill recipients for this biller
-      description: |
-        Returns a list of one or more bill recipients.
-
-        The response will only list a bill recipient if he allows bills to be
-        posted by the biller or allows bills to be posted in general.
-
-        The call will return an empty list if no matching bill recipient is
-        found or the biller is not allowed to send bills to the bill recipient.
-      operationId: bulkSearchBillRecipientsForBiller
-      parameters:
-        - in: body
-          name: body
-          description: |
-            Array of parameters for the search, at least one of the parameters
-            is required
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/BillRecipientsForBillerSearch'
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Bill recipients found
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/BillRecipientsForBillerSearch'
-        default:
-          description: |
-            See section Error Handling of the Software Partner API documentation
-            for further details about errors and error handling.
-          schema:
-            $ref: '#/definitions/Problem'
-  '/billers/{billerId}/business-cases':
-    parameters:
-      - $ref: '#/parameters/path_billerId'
+      - $ref: '#/parameters/path_billerPID'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
       - $ref: '#/parameters/header_xFilename'
       - $ref: '#/parameters/header_xBusinessCaseFormat'
+      - $ref: '#/parameters/header_xBusinessCaseFunction'
     post:
       tags:
         - billers
@@ -206,9 +161,9 @@ paths:
             for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
-  '/billers/{billerId}/business-cases/{businessCaseId}':
+  '/billers/{billerPID}/business-cases/{businessCaseId}':
     parameters:
-      - $ref: '#/parameters/path_billerId'
+      - $ref: '#/parameters/path_billerPID'
       - $ref: '#/parameters/path_businessCaseId'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
@@ -248,7 +203,7 @@ paths:
       summary: Find events for business cases which changed status
       description: |
         Events for status changes of bills, advices, credit notes and reminders
-        which belong to any billerId registered with the requesting SWP.
+        which belong to any billerPID registered with the requesting SWP.
       operationId: findBusinessCaseStatusChangedEvents
       produces:
         - application/json
@@ -277,7 +232,7 @@ paths:
       summary: Find events for instalments which changed status
       description: |
         Events for status changes of instalment bills only which belong to any
-        billerId registered with the requesting SWP.
+        billerPID registered with the requesting SWP.
       operationId: findInstalmentStatusChangedEvents
       produces:
         - application/json
@@ -305,7 +260,7 @@ paths:
         - events
       summary: Find events for bill recipients email address changes
       description: |
-        This event is triggered after any billerId registered with the requesting SWP has submitted a business case with an outdated, so called historically available email address. It notifies about the changed email address of a bill recipient, which has been adjusted in eBill.
+        This event is triggered after any billerPID registered with the requesting SWP has submitted a business case with an outdated, so called historically available email address. It notifies about the changed email address of a bill recipient, which has been adjusted in eBill.
         An email address is considered to be historically available if it was present up to 15 months prior to the submission time.
         The billers are able to submit business cases with historically available email addresses of a bill recipient. However, latest 15 months after the email address changed, the billers are required to submit the business cases with the currently valid email address of the bill
         recipient.
@@ -335,7 +290,7 @@ paths:
         - events
       summary: Find events for bill recipient subscriptions which changed status
       description: |
-        Events for status changes on bill recipient subscriptions to any billerId registered with the requesting SWP, regardless if subscriptions have been done without registration form (event from infrastructure) or with registration form (no event from infrastructure).
+        Events for status changes on bill recipient subscriptions to any billerPID registered with the requesting SWP, regardless if subscriptions have been done without registration form (event from infrastructure) or with registration form (no event from infrastructure).
       operationId: findBillRecipientSubscriptionStatusChangedEvents
       produces:
         - application/json
@@ -451,18 +406,18 @@ securityDefinitions:
       default-biller: default scope for biller
     tokenUrl: 'https://api.swico.com/auth/oauth/token'
 parameters:
-  path_billerId:
-    name: billerId
+  path_billerPID:
+    name: billerPID
     in: path
     type: string
     description: |
-      biller id
-      **Maximal length**: `14`
-      **Example**: `"BIID0000123456"`
-      **Pattern**: `BIID[0-9]{10}`
+      biller PID
+      **Maximal length**: `17`
+      **Example**: `"41100012345678901"`
+      **Pattern**: `41[0-9]{15}`
     required: true
-    maxLength: 14
-    pattern: 'BIID[0-9]{10}'
+    maxLength: 17
+    pattern: '41[0-9]{15}'
   path_businessCaseId:
     name: businessCaseId
     in: path
@@ -534,8 +489,24 @@ parameters:
     description: |
       Format of the business case.
     enum:
-      - ebill
+      - zugferd.EN16931
+      - zugfred.EXTENDED
+      - zugferd.BasicWL
+      - eixml
+      - yellowbill
       - qrbill
+  header_xBusinessCaseFunction:
+    name: X-BCFUNCTION
+    in: header
+    type: string
+    required: false
+    description: |
+      Function of the business case.
+    enum:
+      - bill
+      - creditnote
+      - advice
+      - reminder
 responses:
   BadRequest:
     description: bad request
@@ -801,7 +772,7 @@ definitions:
   InstalmentStatusChangedEvent:
     type: object
     required:
-      - billerId
+      - billerPID
       - businessCaseId
       - externalInstalmentId
       - externalPaymentByInstalmentsId
@@ -890,7 +861,7 @@ definitions:
             type: object
             required:
               - businessCaseId
-              - billerId
+              - billerPID
             properties:
               businessCaseId:
                 type: string
@@ -986,7 +957,7 @@ definitions:
       message:
         type: string
         description: response message from health check
-        example: The healthcheck GET request was successfully received and processed
+        example: The healthcheck GET resp. POST request was successfully received and processed
         maxLength: 100
       requestDateTime:
         type: string
