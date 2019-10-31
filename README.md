@@ -14,7 +14,8 @@ You are welcome to comment and/or discuss on the API by the way of _GitHub issue
 ## API definition
 
 See [Empfehlung für die Schnittstelle zwischen Netzwerkpartnern der SIX eBill und
-Softwareherstellern](https://github.com/swico/ebill-swp-api/blob/master/documents/SchnittstellenempfehlungSIXeBill-DRAFT-0.1.pdf) for the current draft recommendation.
+Softwareherstellern](https://github.com/swico/ebill-swp-api/blob/master/documents/SchnittstellenempfehlungSIXeBill-DRAFT-0.1.pdf) for the current draft recommendation
+(only available in German).
 
 The API definition can be found as a Swagger YAML-file in folder `api` and viewed, for instance,
 with an online tool such as [swagger.io](https://editor.swagger.io).
