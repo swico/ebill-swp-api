@@ -16,13 +16,12 @@ with an online tool such as [swagger.io](https://editor.swagger.io).
 ## Who's involved
 The informal workgroup members:
 
-* Nicolas Guillet and Remo Knaus, Abacus
-* Pierre Arnaud, Epsitec
-* Eva Sediki and Beat Meier, Nintu Informatik
-* Andrea Girasole and Srdjan Micic, Billte
-* Roland Messerli, Messerli Informatik
-* Jean-Claude Gaechter, InvoCloud
-* Gino Campolo, Avaloq
-* Stefan Staehl, Medidata
-* Fabio Serratore and Andrey Moiseenko, SIX
-* Simon Zbinden, GS1
+* Abacus: Nicolas Guillet and Remo Knaus
+* Avaloq: Gino Campolo
+* Billte: Andrea Girasole and Srdjan Micic
+* Epsitec: Pierre Arnaud
+* GS1: Simon Zbinden
+* InvoCloud: Jean-Claude Gaechter
+* Medidata: Stefan Staehl
+* Nintu Informatik: Eva Sediki and Beat Meier
+* SIX: Fabio Serratore and Andrey Moiseenko
