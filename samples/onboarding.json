@@ -6,5 +6,5 @@
     "tokenUrlParams": { "xyz": "abc" }
   },
   "apiUri": "https://api.mynwp.ch/api/ebill",
-  "billerId": "BIID0000001234"
+  "billerPid": "41..."
 }
