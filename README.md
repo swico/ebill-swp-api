@@ -14,13 +14,15 @@ The API definition can be found as a Swagger YAML-file in folder `api` and viewe
 with an online tool such as [swagger.io](https://editor.swagger.io).
 
 ## Who's involved
-The informal workgroup members are meeting for the first time on October 8. 2019 in Zurich,
-at Swico headquarters:
+The informal workgroup members:
 
 * Nicolas Guillet and Remo Knaus, Abacus
-* Andrea Girasole and Srdjan Micic, Billte
 * Pierre Arnaud, Epsitec
+* Eva Sediki and Beat Meier, Nintu Informatik
+* Andrea Girasole and Srdjan Micic, Billte
 * Roland Messerli, Messerli Informatik
-* Eva Sediki, Nintu Informatik
-* ..., SIX
-  
+* Jean-Claude Gaechter, InvoCloud
+* Gino Campolo, Avaloq
+* Stefan Staehl, Medidata
+* Fabio Serratore and Andrey Moiseenko, SIX
+* Simon Zbinden, GS1
