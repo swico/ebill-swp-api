@@ -1,0 +1,10 @@
+{
+  "auth": {
+    "authorization": "czZCaGRSa3F0MzpnWDFmQmF0M2JW",
+    "authorizationCode": "SplxlOBeZQQYbYS6WxSbIA",
+    "tokenUrl": "https://api.mynwp.ch/auth/ebill/oauth/token",
+    "tokenUrlParams": { "xyz": "abc" }
+  },
+  "apiUri": "https://api.mynwp.ch/api/ebill",
+  "billerId": "BIID0000001234"
+}
