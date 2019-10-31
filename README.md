@@ -20,7 +20,7 @@ Softwareherstellern](https://github.com/swico/ebill-swp-api/blob/master/document
 The API definition can be found as a Swagger YAML-file in folder `api` and viewed,
 for instance, with an online tool such as [swagger.io](https://editor.swagger.io).
 
-The [onboarding process](https://github.com/swico/ebill-swp-api/tree/master/documents/onboarding)
+The [onboarding process](https://github.com/swico/ebill-swp-api/tree/master/documents/onboarding.md)
 is currently being discussed by the workgroup.
 
 ## Who's involved

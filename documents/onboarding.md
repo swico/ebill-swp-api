@@ -5,8 +5,8 @@ required to communicate with the API.
 
 ## JSON format
 
-File `sample.json` shows an example JSON payload used to configure the client
-software with its initial parameters:
+File `onboarding-sample.json` provides an example JSON payload used to configure
+the client software with its initial parameters:
 
 ```json
 {
@@ -16,10 +16,17 @@ software with its initial parameters:
     "tokenUrl": "https://api.mynwp.ch/auth/ebill/oauth/token",
     "tokenUrlParams": { "xyz": "abc" }
   },
-  "apiUri": "https://api.mynwp.ch/api/ebill",
+  "apiUrl": "https://api.mynwp.ch/api/ebill",
   "billerPid": "41..."
 }
 ```
+
+- `auth.authorization` &rArr; map to `Authorization: Basic ...` header
+- `auth.authorizationCode` &rArr; map to `code` parameter for `token` endpoint.
+- `auth.tokenUrl` &rArr; URL of OAuth 2.0 token API.
+- `auth.tokenUrlParams` &rArr; additional parameters for HTTP POST on `token` endpoint.
+- `apiUrl` &rArr; URL of API.
+- `billerPid` &rArr; biller PID.
 
 The client software uses the _authorization code_ to retrieve a _refresh token_
 over the _token URL_.

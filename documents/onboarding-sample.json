@@ -5,6 +5,6 @@
     "tokenUrl": "https://api.mynwp.ch/auth/ebill/oauth/token",
     "tokenUrlParams": { "xyz": "abc" }
   },
-  "apiUri": "https://api.mynwp.ch/api/ebill",
+  "apiUrl": "https://api.mynwp.ch/api/ebill",
   "billerPid": "41..."
 }
