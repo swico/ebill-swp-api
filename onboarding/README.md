@@ -1,9 +1,25 @@
-# Sample files
+# Biller Onboarding (proposal)
 
-## Onboarding
+A biller should be able to easily configure her software and specify all parameters
+required to communicate with the API.
 
-File `onboarding.json` shows an example JSON payload used to configure the client
-software with its initial parameters.
+## JSON format
+
+File `sample.json` shows an example JSON payload used to configure the client
+software with its initial parameters:
+
+```json
+{
+  "auth": {
+    "authorization": "czZCaGRSa3F0MzpnWDFmQmF0M2JW",
+    "authorizationCode": "SplxlOBeZQQYbYS6WxSbIA",
+    "tokenUrl": "https://api.mynwp.ch/auth/ebill/oauth/token",
+    "tokenUrlParams": { "xyz": "abc" }
+  },
+  "apiUri": "https://api.mynwp.ch/api/ebill",
+  "billerPid": "41..."
+}
+```
 
 The client software uses the _authorization code_ to retrieve a _refresh token_
 over the _token URL_.
