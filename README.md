@@ -25,7 +25,7 @@ is currently being discussed by the workgroup.
 
 ## Who's involved
 
-The informal workgroup members:
+The informal workgroup members as of 31.10.2019:
 
 - Abacus: Nicolas Guillet and Remo Knaus
 - Avaloq: Gino Campolo
