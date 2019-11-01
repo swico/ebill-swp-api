@@ -34,5 +34,6 @@ The informal workgroup members as of 31.10.2019:
 - GS1: Simon Zbinden
 - InvoCloud: Jean-Claude Gaechter
 - Medidata: Stefan Staehl
+- Messerli Informatik, Roland Messerli
 - Nintu Informatik: Eva Sediki and Beat Meier
 - SIX: Fabio Serratore and Andrey Moiseenko
