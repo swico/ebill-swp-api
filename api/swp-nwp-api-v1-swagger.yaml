@@ -57,17 +57,13 @@ tags:
       event type 'Subscription status changes'.
   - name: healthcheck
     description: |
-      **System Healthcheck** This allows to check the basic state of the system
-      (can it be reached, does authentication and auhorization work, does it
-      respond). As some infrastructures block certain HTTP methods by default,
-      the healthcheck allows to test if all required methods (GET, POST, PUT,
-      DELETE) work across all layers.
+      **System Healthcheck** This allows to check the basic state of the system (can it be reached, does authentication and auhorization work, does it respond). As some infrastructures block certain HTTP methods by default, the healthcheck allows to test if all required methods (GET, POST) work across all layers.
 schemes:
   - https
 paths:
-  '/billers/{billerPID}/bill-recipients/search':
+  '/billers/{billerPid}/bill-recipients/search':
     parameters:
-      - $ref: '#/parameters/path_billerPID'
+      - $ref: '#/parameters/path_billerPid'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
     post:
@@ -109,9 +105,9 @@ paths:
             for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
-  '/billers/{billerPID}/business-cases':
+  '/billers/{billerPid}/business-cases':
     parameters:
-      - $ref: '#/parameters/path_billerPID'
+      - $ref: '#/parameters/path_billerPid'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
       - $ref: '#/parameters/header_xFilename'
@@ -161,9 +157,9 @@ paths:
             for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
-  '/billers/{billerPID}/business-cases/{businessCaseId}':
+  '/billers/{billerPid}/business-cases/{businessCaseId}':
     parameters:
-      - $ref: '#/parameters/path_billerPID'
+      - $ref: '#/parameters/path_billerPid'
       - $ref: '#/parameters/path_businessCaseId'
       - $ref: '#/parameters/header_authorization'
       - $ref: '#/parameters/header_xCorrelationId'
@@ -203,7 +199,7 @@ paths:
       summary: Find events for business cases which changed status
       description: |
         Events for status changes of bills, advices, credit notes and reminders
-        which belong to any billerPID registered with the requesting SWP.
+        which belong to any billerPid registered with the requesting SWP.
       operationId: findBusinessCaseStatusChangedEvents
       produces:
         - application/json
@@ -232,7 +228,7 @@ paths:
       summary: Find events for instalments which changed status
       description: |
         Events for status changes of instalment bills only which belong to any
-        billerPID registered with the requesting SWP.
+        billerPid registered with the requesting SWP.
       operationId: findInstalmentStatusChangedEvents
       produces:
         - application/json
@@ -260,7 +256,7 @@ paths:
         - events
       summary: Find events for bill recipients email address changes
       description: |
-        This event is triggered after any billerPID registered with the requesting SWP has submitted a business case with an outdated, so called historically available email address. It notifies about the changed email address of a bill recipient, which has been adjusted in eBill.
+        This event is triggered after any billerPid registered with the requesting SWP has submitted a business case with an outdated, so called historically available email address. It notifies about the changed email address of a bill recipient, which has been adjusted in eBill.
         An email address is considered to be historically available if it was present up to 15 months prior to the submission time.
         The billers are able to submit business cases with historically available email addresses of a bill recipient. However, latest 15 months after the email address changed, the billers are required to submit the business cases with the currently valid email address of the bill
         recipient.
@@ -290,7 +286,7 @@ paths:
         - events
       summary: Find events for bill recipient subscriptions which changed status
       description: |
-        Events for status changes on bill recipient subscriptions to any billerPID registered with the requesting SWP, regardless if subscriptions have been done without registration form (event from infrastructure) or with registration form (no event from infrastructure).
+        Events for status changes on bill recipient subscriptions to any billerPid registered with the requesting SWP, regardless if subscriptions have been done without registration form (event from infrastructure) or with registration form (no event from infrastructure).
       operationId: findBillRecipientSubscriptionStatusChangedEvents
       produces:
         - application/json
@@ -355,48 +351,6 @@ paths:
             See section Error Handling of the Software Partner API documentation for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
-    put:
-      tags:
-        - healthcheck
-      summary: Health check using PUT method
-      description: Returns the request body. This operation will not modify the system.
-      operationId: healthCheckForPut
-      parameters:
-        - in: body
-          name: body
-          description: Any message which is expected in the response
-          required: true
-          schema:
-            $ref: '#/definitions/HealthCheckRequest'
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Healthcheck successful
-          schema:
-            $ref: '#/definitions/HealthCheckResponse'
-        default:
-          description: |
-            See section Error Handling of the Software Partner API documentation for further details about errors and error handling.
-          schema:
-            $ref: '#/definitions/Problem'
-    delete:
-      tags:
-        - healthcheck
-      summary: Health check using DELETE method
-      description: >-
-        Returns without further content. This operation will not modify the system.
-      operationId: healthCheckForDelete
-      responses:
-        '204':
-          description: Healthcheck successful
-        default:
-          description: |
-            See section Error Handling of the Software Partner API documentation for further details about errors and error handling.
-          schema:
-            $ref: '#/definitions/Problem'
 securityDefinitions:
   oauth2_cc:
     type: oauth2
@@ -406,8 +360,8 @@ securityDefinitions:
       default-biller: default scope for biller
     tokenUrl: 'https://api.swico.com/auth/oauth/token'
 parameters:
-  path_billerPID:
-    name: billerPID
+  path_billerPid:
+    name: billerPid
     in: path
     type: string
     description: |
@@ -772,7 +726,7 @@ definitions:
   InstalmentStatusChangedEvent:
     type: object
     required:
-      - billerPID
+      - billerPid
       - businessCaseId
       - externalInstalmentId
       - externalPaymentByInstalmentsId
@@ -861,7 +815,7 @@ definitions:
             type: object
             required:
               - businessCaseId
-              - billerPID
+              - billerPid
             properties:
               businessCaseId:
                 type: string
