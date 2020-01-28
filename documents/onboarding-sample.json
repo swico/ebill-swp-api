@@ -8,11 +8,13 @@
   "nwp_api_endpoint": "https://api.my-nwp.ch/biller/v1",
 
   "auth": {
-    "code": "oaerhgergha0ghaergj",
     "issuer": "https://auth.my-nwp.ch",
-    "grant_type": "authorization_code",
-    "client_id": "https://ebill-swp.org",
-    "redirect_uri": "tag:ebill-swp.org,2020:biller-onboarding",
+    "post": {
+      "code": "oaerhgergha0ghaergj",
+      "grant_type": "authorization_code",
+      "client_id": "https://ebill-swp.org",
+      "redirect_uri": "tag:ebill-swp.org,2020:biller-onboarding"
+    },
     "token_endpoint": {
       "url": "https://auth.my-nwp.ch/oauth/v1/token",
       "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"],
