@@ -1,10 +1,22 @@
 {
+  "version": "1.0",
+
+  "biller_id": "4109124514514513",
+  "expiration_date": "2020-02-20T23:59:59",
+
+  "nwp_id": "4177",
+  "nwp_api_endpoint": "https://api.my-nwp.ch/biller/v1",
+
   "auth": {
-    "authorization": "czZCaGRSa3F0MzpnWDFmQmF0M2JW",
-    "authorizationCode": "SplxlOBeZQQYbYS6WxSbIA",
-    "tokenUrl": "https://api.mynwp.ch/auth/ebill/oauth/token",
-    "tokenUrlParams": { "xyz": "abc" }
-  },
-  "apiUrl": "https://api.mynwp.ch/api/ebill",
-  "billerPid": "41100012345678901"
+    "code": "oaerhgergha0ghaergj",
+    "issuer": "https://auth.my-nwp.ch",
+    "grant_type": "authorization_code",
+    "client_id": "https://ebill-swp.org",
+    "redirect_uri": "tag:ebill-swp.org,2020:biller-onboarding",
+    "token_endpoint": {
+      "url": "https://auth.my-nwp.ch/oauth/v1/token",
+      "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"],
+      "params": { "xyz": "def" }
+    }
+  }
 }
