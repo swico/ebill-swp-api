@@ -23,6 +23,11 @@ for instance, with an online tool such as [swagger.io](https://editor.swagger.io
 The [onboarding process](https://github.com/swico/ebill-swp-api/tree/master/documents/onboarding.md)
 is currently being discussed by the workgroup.
 
+## NWP Directory
+
+The [NWP Directory](https://github.com/swico/ebill-swp-api/tree/master/documents/nwp-directory.md) lists in human-readable
+form the currently assigned PID prefixes.
+
 ## Who's involved
 
 The informal workgroup members as of 31.10.2019:
