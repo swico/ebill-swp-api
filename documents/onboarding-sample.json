@@ -1,20 +1,34 @@
 {
   "version": "1.0",
+  "is_test": false,
 
-  "biller_id": "4109124514514513",
-  "expiration_date": "2020-02-20T23:59:59",
+  "biller_id": "41090012345678938",
+  "expiration_date": "2020-02-20T23:59:59+01:00",
 
-  "nwp_id": "4177",
-  "nwp_api_endpoint": "https://api.my-nwp.ch/biller/v1",
+  "nwp_id": "4109",
+  "nwp_name": "AbaNet",
+  "nwp_logo_url": "https://www.my-nwp.ch/about/logo.png",
+  "nwp_info_url": "https://www.my-nwp.ch/about/info/",
+
+  "nwp_api_endpoint": {
+    "url": "https://api.my-nwp.ch/biller/v1",
+    "headers": []
+  },
 
   "auth": {
     "issuer": "https://auth.my-nwp.ch",
-    "post": {
-      "code": "oaerhgergha0ghaergj",
-      "grant_type": "authorization_code",
-      "client_id": "https://ebill-swp.org",
-      "redirect_uri": "tag:ebill-swp.org,2020:biller-onboarding"
+    
+    "authorization_endpoint": {
+      "url": "https://auth.my-nwp.ch/oauth/v1/initial",
+      "headers": [],
+      "params": {
+        "code": "oaerhgergha0ghaergj",
+        "grant_type": "authorization_code",
+        "client_id": "https://ebill-swp.org",
+        "redirect_uri": "tag:ebill-swp.org,2020:biller-onboarding"
+      }
     },
+
     "token_endpoint": {
       "url": "https://auth.my-nwp.ch/oauth/v1/token",
       "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"],
