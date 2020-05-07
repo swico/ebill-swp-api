@@ -1,8 +1,10 @@
 {
   "version": "1.0",
   "is_test": false,
+  
+  "company_pid": "41090012345678938",
+  "company_name": "Hans Müller GmbH",
 
-  "biller_id": "41090012345678938",
   "expiration_date": "2020-02-20T23:59:59+01:00",
 
   "nwp_id": "4109",
@@ -31,8 +33,7 @@
 
     "token_endpoint": {
       "url": "https://auth.my-nwp.ch/oauth/v1/token",
-      "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"],
-      "params": { "xyz": "def" }
+      "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"]
     }
   }
 }
