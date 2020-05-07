@@ -1,6 +1,8 @@
 {
   "version": "1.0",
   "is_test": false,
+
+  "audience": "biller",
   
   "company_pid": "41090012345678938",
   "company_name": "Hans Müller GmbH",
