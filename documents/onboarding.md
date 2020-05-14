@@ -20,11 +20,11 @@ Here is a subset of the JSON file:
   
   "party": {
     "id": "41090012345678938",
-    /* ... */
+    ...
   },
   "nwp": {
     "id": "4109",
-    /* ... */
+    ...
   },
 
   "auth": {
