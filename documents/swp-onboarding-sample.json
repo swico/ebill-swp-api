@@ -3,27 +3,32 @@
   "is_test": false,
 
   "audience": "biller",
-  
-  "company_pid": "41090012345678938",
-  "company_name": "Hans Müller GmbH",
-
   "expiration_date": "2020-02-20T23:59:59+01:00",
+  
+  "party": {
+    "id": "41090012345678938",
+    "name": "Muster AG",
+    "is_sender": true,
+    "is_receiver": false,
+    "is_b2b_sender": false,
+    "is_b2b_receiver": false
+  },
 
-  "nwp_id": "4109",
-  "nwp_name": "AbaNet",
-  "nwp_logo_url": "https://www.my-nwp.ch/about/logo.png",
-  "nwp_info_url": "https://www.my-nwp.ch/about/info/",
-
-  "nwp_api_endpoint": {
-    "url": "https://api.my-nwp.ch/biller/v1",
-    "headers": []
+  "nwp": {
+    "id": "4199",
+    "name": "My NWP",
+    "logo_url": "https://www.mynwp.ch/about/logo.png",
+    "info_url": "https://www.mynwp.ch/about/info/",
+    "api_endpoint": {
+      "url": "https://api.mynwp.ch/biller/v1",
+      "headers": ["Authorization: Bearer czZCaGmF0M2JW"]
+    }
   },
 
   "auth": {
-    "issuer": "https://auth.my-nwp.ch",
-    
+    "issuer": "https://auth.mynwp.ch",
     "authorization_endpoint": {
-      "url": "https://auth.my-nwp.ch/oauth/v1/initial",
+      "url": "https://auth.mynwp.ch/oauth/v1/initial",
       "headers": [],
       "params": {
         "code": "oaerhgergha0ghaergj",
