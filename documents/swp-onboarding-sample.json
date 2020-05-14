@@ -21,7 +21,7 @@
     "info_url": "https://www.mynwp.ch/about/info/",
     "api_endpoint": {
       "url": "https://api.mynwp.ch/biller/v1",
-      "headers": ["Authorization: Bearer czZCaGmF0M2JW"]
+      "headers": ["X-NWP-Foo: bar"]
     }
   },
 
@@ -39,7 +39,7 @@
     },
 
     "token_endpoint": {
-      "url": "https://auth.my-nwp.ch/oauth/v1/token",
+      "url": "https://auth.mynwp.ch/oauth/v1/token",
       "headers": ["Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW"]
     }
   }
