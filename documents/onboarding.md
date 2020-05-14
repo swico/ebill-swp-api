@@ -24,6 +24,10 @@ Here is a subset of the JSON file:
   },
   "nwp": {
     "id": "4109",
+    "api_endpoint": {
+      "url": "https://api.mynwp.ch/biller/v1",
+      ...
+    }
     ...
   },
 
@@ -125,7 +129,7 @@ every API call. The _refresh token_ must be stored and/or updated for future cal
 
 ```json
 {
-  "access_token": "...",
+  "access_token": "eyJhbGIJ9.eyJqdGkMTI1NH0.LcSaQy",
   "expires_in": 600,
   "refresh_token": "eyJhbGciO.eyJqdggSrg53.3rgSJC34ef"
 }
@@ -133,6 +137,44 @@ every API call. The _refresh token_ must be stored and/or updated for future cal
 
 The access token returned by the NWP should be treated as an opaque string; it might
 or might not be a JWT.
+
+
+### API call
+
+Use the _access token_ in the header _Authorization: Bearer_ of API calls:
+
+```txt
+     GET /biller/v1/healthcheck HTTP/1.1
+     Host: api.mynwp.ch
+     Authorization: Bearer eyJhbGIJ9.eyJqdGkMTI1NH0.LcSaQy
+     Accept: application/json
+     X-NWP-Foo: bar
+```
+or
+```txt
+curl -X GET https://api.mynwp.ch/biller/v1/healthcheck -H 'Accept: application/json' \
+     -H 'Authorization: Bearer eyJhbGIJ9.eyJqdGkMTI1NH0.LcSaQy' -H 'X-NWP-Foo: bar' 
+```
+
+### API Responses (200 OK)
+
+The API call returns a json, e.g.:
+
+```json
+{
+  "message": "The healthcheck GET request was successfully received and processed.",
+  "requestDateTime": "2020-05-04T13:02:25.889126+02:00",
+  "receivedHeaders": [
+    {
+      "headerName": "X-NWP-Foo",
+      "headerValue": "bar"
+    }
+  ],
+  "environmentStage": "X",
+  "applicationVersion": "1.2.3",
+  "apiVersion": "1.5.2"
+}
+```
 
 ## External Resources
 
