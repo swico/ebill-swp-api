@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Test passage in a document**
+**Text passage in a document**
 Specify which text passage in which document you want to comment on or ask a question about.
 
 **API operation or definition**
