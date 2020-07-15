@@ -34,7 +34,7 @@ info:
 
     *Contact*
      SWICO
-  version: 1.0.0-alpha
+  version: 1.0.1-alpha
   title: Software Partner API v1
   contact:
     name: SWICO Support
@@ -444,9 +444,9 @@ parameters:
       Format of the business case.
     enum:
       - zugferd.EN16931
-      - zugfred.EXTENDED
+      - zugferd.EXTENDED
       - zugferd.BasicWL
-      - eixml
+      - fscmxml
       - yellowbill
       - qrbill
   header_xBusinessCaseFunction:
@@ -545,8 +545,15 @@ definitions:
   BillRecipientSubscription:
     type: object
     required:
+      - billerPid
       - billRecipient
     properties:
+      billerPid:
+        type: string
+        description: biller PID
+        maxLength: 17
+        pattern: '41[0-9]{15}'
+        example: '41100012345678901'
       billRecipient:
         $ref: '#/definitions/BillRecipient'
       accountNumber:
@@ -699,6 +706,7 @@ definitions:
   BusinessCaseStatusChangedEvent:
     type: object
     required:
+      - billerPid
       - businessCaseId
       - newStatus
     description: |
@@ -706,6 +714,12 @@ definitions:
     allOf:
       - $ref: '#/definitions/Event'
       - properties:
+          billerPid:
+            type: string
+            description: biller PID
+            maxLength: 17
+            pattern: '41[0-9]{15}'
+            example: '41100012345678901'
           businessCaseId:
             type: string
             description: business case id
@@ -736,6 +750,12 @@ definitions:
     allOf:
       - $ref: '#/definitions/Event'
       - properties:
+          billerPid:
+            type: string
+            description: biller PID
+            maxLength: 17
+            pattern: '41[0-9]{15}'
+            example: '41100012345678901'
           businessCaseId:
             type: string
             description: 'business case id'
@@ -823,6 +843,12 @@ definitions:
                 maxLength: 39
                 pattern: 'NWPBCID[0-9A-Z]{32}'
                 example: 'NWPBCID0FB909852BBC4D06AD8336AAE87D7FC9'
+              billerPid:
+                type: string
+                description: biller PID
+                maxLength: 17
+                pattern: '41[0-9]{15}'
+                example: '41100012345678901'
   Problem:
     type: object
     properties:
