@@ -47,3 +47,5 @@ The informal workgroup members as of June 2020:
 
 Translation of the _interface recommendation_ was managed by Adrian Kaufmann (SIX).
 The workgroup is also supported by Oliver Jenny (SIX) and Thomas Reske (SIX).
+
+Thanks to SIX and also to Giancarlo Palmisani from SWICO and Simon Zbinden from GS1
