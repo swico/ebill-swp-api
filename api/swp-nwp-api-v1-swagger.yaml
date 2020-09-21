@@ -2,62 +2,42 @@ swagger: '2.0'
 info:
   description: |
     The application programming interface for software partners (Software Partner API) allows communication with an eBill Network Partner.
-    The eBill service comprises of electronic bills, reminders, credit notes and advices which are summarized under the term "business case". Business cases are delivered from software partners via network partners to the SIX eBill  infrastructure and can be received online by bill recipients.
+    The eBill service comprises of electronic bills, reminders, credit notes and advices which are summarized under the term "business case". Business cases are delivered from software partners via network partners to the SIX eBill infrastructure and can be received online by bill recipients.
 
-    Documentation of the Software Partner API comprises of three parts:
-
-    *Handbook for software partners*
-    Business-level description targeting product and IT management.
-
-    *Software Partner API documentation*
-    Technical description targeting IT architects and developers.
-
-    *OpenAPI Specification*
-    Technical specification of the interface for developers and code generators.
+    Documentation and Open API licence of the Software Partner API can be found on https://ebill-swp.org
 
     ### General Note
 
-    SWICO reserves the right to amend this documentation as required within the
-    scope of the applicable contractual conditions.
+    The Working Group eBill-SWP-API reserves the right to amend this documentation as required.
 
-    All rights are reserved with respect to this documentation, including with
-    regard to photocopying and storage on electronic media as well as
-    translation into foreign languages.
+    This documentation has been compiled with the greatest care, but may nevertheless contain errors or inaccuracies. Working Group eBill-SWP-API cannot assume any legal responsibility or any liability for erroneous information or its consequences.
 
-    This documentation has been compiled with the greatest care, but may
-    nevertheless contain errors or inaccuracies. SWICO cannot assume any legal
-    responsibility or any liability for erroneous information or its
-    consequences.
-
-    If you notice any errors in this documentation or have any suggestions for
-    improvements, we would be grateful to receive your feedback.
-
-    *Contact*
-     SWICO
-  version: 1.0.1-alpha
+    If you notice any errors in this documentation or have any suggestions for improvements, we would be grateful to receive your feedback; please open an issue on our website.
+	 
+  version: 1.0.2-alpha
   title: Software Partner API v1
   contact:
-    name: SWICO Support
-    email: support@swico.com
-    url: 'https://www.swico.ch'
-host: api.swico.ch
-basePath: /api/swico/softwarepartner/v1
+    name: 'Software Partner API'
+    url: 'https://ebill-swp.org'
+host: api.mynwp.ch
+basePath: /swp/v1
 tags:
   - name: billers
     description: |
       **Biller Management**
-
-      All operations that are associated with a biller are located within the
-      biller resource, including the creation of business cases.
+      All operations that are associated with a biller are located within the biller resource, including the creation of business cases.
   - name: events
     description: |
       **Notification Events**
-
-      The event resource allows the software partner to retrieve changes for the
-      event type 'Subscription status changes'.
+      The event resource allows the software partner to retrieve changes for the event type 'Subscription status changes'.
+  - name: sectors
+    description: |
+      **Industry Sector**
+      Industry sectors are valid system wide. Each biller will reference one or several industry sectors.
   - name: healthcheck
     description: |
-      **System Healthcheck** This allows to check the basic state of the system (can it be reached, does authentication and auhorization work, does it respond). As some infrastructures block certain HTTP methods by default, the healthcheck allows to test if all required methods (GET, POST) work across all layers.
+      **System Healthcheck**
+      This allows to check the basic state of the system (can it be reached, does authentication and auhorization work, does it respond). As some infrastructures block certain HTTP methods by default, the healthcheck allows to test if all required methods (GET, POST) work across all layers.
 schemes:
   - https
 paths:
@@ -74,7 +54,7 @@ paths:
         Returns a list of one or more bill recipients.
 
         The response will only list a bill recipient if he allows bills to be
-        posted by the biller or allows bills to be posted in general.
+        posted by the biller or allows bills to be posted in general. It will always return the billRecipientId and optionally any other provided parameter.
 
         The call will return an empty list if no matching bill recipient is
         found or the biller is not allowed to send bills to the bill recipient.
@@ -87,7 +67,7 @@ paths:
             required
           required: true
           schema:
-            $ref: '#/definitions/BillRecipientsForBillerSearch'
+            $ref: '#/definitions/BillRecipientsForBillerSearchRequest'
       consumes:
         - application/json
       produces:
@@ -98,9 +78,9 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/BillRecipientsForBillerSearch'
+              $ref: '#/definitions/BillRecipientsForBillerSearchResponse'
         default:
-          description: >-
+          description: |
             See section Error Handling of the Software Partner API documentation
             for further details about errors and error handling.
           schema:
@@ -168,8 +148,7 @@ paths:
         - billers
       summary: Get business case
       description: |
-        Depending on the accept header, this operation either returns a JSON
-        business case object or the original PDF.
+        Depending on the accept header, this operation either returns a JSON business case object or the original PDF.
         The returned JSON object contains one of the business case subtypes: 
         Bill, InstalmentBill, Reminder, CreditNote or Advice.
       operationId: getBusinessCase
@@ -302,6 +281,29 @@ paths:
             See section Error Handling of the Software Partner API documentation for further details about errors and error handling.
           schema:
             $ref: '#/definitions/Problem'
+  /sectors:
+    parameters:
+      - $ref: '#/parameters/header_authorization'
+      - $ref: '#/parameters/header_xCorrelationId'
+    get:
+      tags:
+        - sectors
+      summary: 'Find Sectors'
+      description: 'Get the industry sector list of the eBill infrastructure. The sectors are more or less static and can therefore be cached.'
+      operationId: findSectors
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Sectors found'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Sector'
+        'default':
+          description: 'See section Error Handling of the Network Partner API documentation for further details about errors and error handling.'
+          schema:
+            $ref: '#/definitions/Problem'
   /healthcheck:
     parameters:
       - $ref: '#/parameters/header_authorization'
@@ -352,13 +354,14 @@ paths:
           schema:
             $ref: '#/definitions/Problem'
 securityDefinitions:
-  oauth2_cc:
+  oauth2_cg:
     type: oauth2
-    description: OAuth2 based authentication with client credentials.
-    flow: application
+    description: OAuth2 based authentication with authorization code grant.
+    flow: accessCode
     scopes:
       default-biller: default scope for biller
-    tokenUrl: 'https://api.swico.com/auth/oauth/token'
+    tokenUrl: 'https://api.mynwp.com/oauth/v1/token'
+    authorizationUrl: 'https://api.mynwp.com/oauth/v1/authorize'
 parameters:
   path_billerPid:
     name: billerPid
@@ -390,20 +393,17 @@ parameters:
     type: string
     maxLength: 39
     pattern: 'NWPD D[0-9A-Z]{32}'
-    description: >
+    description: |
       Id of the last received event. If omitted, the result starts with the oldest available event.
-
       **Example**: `"NWPEVID82A65938766547EBBBA39BA6F7B07F24"`
-
       **Maximal length**: `39`
-
       **Pattern**: `"NWPEVID[0-9A-Z]{32}"`
   query_limitEvents:
     name: limit
     in: query
     type: integer
     description: |
-      maximum number of events one wants to receive (technical maximum is 10000, no more will be returned at once and you have to fetch again to check if there are more)
+      Maximum number of events one wants to receive (technical maximum is 10000, no more will be returned at once and you have to fetch again to check if there are more)
     maximum: 10000
     default: 1000
   header_xCorrelationId:
@@ -431,7 +431,7 @@ parameters:
     minLength: 1
     maxLength: 99
     required: false
-    description: >
+    description: |
       Filename for the business case PDF. This is only used for analytical purposes and support. The filename is not visible for the bill recipient.
       **Minimal length**: `1`
       **Maximal length**: `99`
@@ -440,8 +440,7 @@ parameters:
     in: header
     type: string
     required: false
-    description: |
-      Format of the business case.
+    description: Format of the business case.
     enum:
       - zugferd.EN16931
       - zugferd.EXTENDED
@@ -454,8 +453,7 @@ parameters:
     in: header
     type: string
     required: false
-    description: |
-      Function of the business case.
+    description: Function of the business case.
     enum:
       - bill
       - creditnote
@@ -517,19 +515,19 @@ definitions:
         example: CH
         maxLength: 2
         pattern: '[A-Z]{2}'
-  BillRecipientsForBillerSearch:
+  BillRecipientsForBillerSearchRequest:
     type: object
     properties:
       emailAddress:
         type: string
-        description: email address of the bill recipient
-        example: peter@muster.ch
+        description: 'email address of the bill recipient'
+        example: 'peter@muster.ch'
         minLength: 1
         maxLength: 256
         format: email
       billRecipientId:
         type: string
-        description: id of the bill recipient
+        description: 'id of the bill recipient'
         example: '41010560425610173'
         minLength: 1
         maxLength: 17
@@ -541,7 +539,34 @@ definitions:
           Note that this has to contain the swiss enterprise identification number (UID) from the commercial register (Handelsregister) which may be different from the VAT UID (Mehrwertsteuer UID).
         maxLength: 12
         pattern: 'CHE[0-9]{9}'
-        example: CHE123456789
+        example: 'CHE123456789'
+  BillRecipientsForBillerSearchResponse:
+    type: object
+    required:
+      - billRecipientId
+    properties:
+      emailAddress:
+        type: string
+        description: 'email address of the bill recipient'
+        example: 'peter@muster.ch'
+        minLength: 1
+        maxLength: 256
+        format: email
+      billRecipientId:
+        type: string
+        description: 'id of the bill recipient'
+        example: '41010560425610173'
+        minLength: 1
+        maxLength: 17
+        pattern: '([0-9])*'
+      enterpriseIdentificationNumber:
+        type: string
+        description: |
+          Swiss enterprise identification number (UID) without dashes, dots or extension.
+          Note that this has to contain the swiss enterprise identification number (UID) from the commercial register (Handelsregister) which may be different from the VAT UID (Mehrwertsteuer UID).
+        maxLength: 12
+        pattern: 'CHE[0-9]{9}'
+        example: 'CHE123456789'
   BillRecipientSubscription:
     type: object
     required:
@@ -561,13 +586,13 @@ definitions:
         maxLength: 21
         description: |
           Account number of the biller (e.g. iban), if provided from the financial institution
-      esrReference:
+      referenceStructured:
         type: string
-        description: 'ESR reference number, if provided from the financial institution'
-        minLength: 16
+        description: |
+          ESR or QR or creditor reference number, if provided from the financial institution.
         maxLength: 27
         example: '123456123456789012345678901'
-        pattern: '([0-9])*'
+        pattern: '([a-zA-Z0-9])*'
   BillRecipient:
     type: object
     required:
@@ -683,26 +708,32 @@ definitions:
         minLength: 1
         format: date-time
         example: '2019-01-01T10:00:00.000Z'
-  AmountWithCurrency:
+  ApprovalAmountWithCurrency:
+    description: |
+      Amount provided by status changed events if the new status is APPROVED. The value is always greater than zero.
     type: object
     required:
       - value
       - currencyCode
     properties:
       value:
-        description: |
-          The amount value. Take care when using JavaScript libraries to parse this value - it should be treated as a financial amount and therefore not as a floating point number but rather using a precise decimal representation (like BigDecimal in Java).
-          **Maximum value**: `99'999'999.99`
-          **Maximal length**: `10`
-        type: number
-        example: 99.99
+        $ref: '#/definitions/AmountValue'
       currencyCode:
-        description: |
-          The amount currency code according to ISO-4217.
-        type: string
-        example: CHF
-        maxLength: 3
-        pattern: '[A-Z]{3}'
+        $ref: '#/definitions/CurrencyCode'
+  AmountValue:
+    description: |
+      The amount value. Take care when using JavaScript libraries to parse this value - it should be treated as a financial amount and therefore not as a floating point number but rather using a precise decimal representation (like BigDecimal in Java).
+      **Maximum value**: `99'999'999.99`
+      **Maximal length**: `10`
+    type: number
+    example: 99.99
+  CurrencyCode:
+    description: |
+      The amount currency code according to ISO-4217.
+    type: string
+    example: 'CHF'
+    maxLength: 3
+    pattern: '[A-Z]{3}'
   BusinessCaseStatusChangedEvent:
     type: object
     required:
@@ -736,7 +767,7 @@ definitions:
               - REJECTED
               - COMPLETED
           approvedAmount:
-            $ref: '#/definitions/AmountWithCurrency'
+            $ref: '#/definitions/ApprovalAmountWithCurrency'
   InstalmentStatusChangedEvent:
     type: object
     required:
@@ -784,7 +815,7 @@ definitions:
               - REJECTED
               - COMPLETED
           approvedAmount:
-            $ref: '#/definitions/AmountWithCurrency'
+            $ref: '#/definitions/ApprovalAmountWithCurrency'
   BillRecipientSubscriptionStatusChangedEvent:
     type: object
     required:
@@ -849,13 +880,44 @@ definitions:
                 maxLength: 17
                 pattern: '41[0-9]{15}'
                 example: '41100012345678901'
+  Sector:
+    type: object
+    properties:
+      id:
+        description: A unique id for this sector.
+        type: string
+        example: 'SCID0000000000'
+        maxLength: 14
+        pattern: 'SCID[0-9]{10}'
+      localizedData:
+        type: object
+        properties:
+          ger:
+            $ref: '#/definitions/LocalizedSectorData'
+          fre:
+            $ref: '#/definitions/LocalizedSectorData'
+          ita:
+            $ref: '#/definitions/LocalizedSectorData'
+          eng:
+            $ref: '#/definitions/LocalizedSectorData'
+  LocalizedSectorData:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: 'name of the sector'
+        minLength: 1
+        maxLength: 36
+        example: 'Transport'
   Problem:
     type: object
     properties:
       type:
         type: string
         format: uri
-        description: >
+        description: |
           An absolute URI that identifies the problem type.
           We may provide human-readable documentation for the problem type in the future, when the URI is dereferenced.
           For now consult the Software Partner API documentation for further information.
@@ -864,15 +926,13 @@ definitions:
         example: /problems/REQUEST_BODY_VALIDATION_FAILED
       title:
         type: string
-        description: |
-          A short, human readable summary of the problem type.
+        description: A short, human readable summary of the problem type.
         example: Payload has missing or invalid values
       status:
         type: integer
         format: int32
-        description: >
-          The HTTP status code generated by the origin server for this
-          occurrence of the problem.
+        description: |
+          The HTTP status code generated by the origin server for this occurrence of the problem.
         minimum: 100
         maximum: 600
         exclusiveMaximum: true
@@ -886,11 +946,11 @@ definitions:
       instance:
         type: string
         format: uri
-        description: >
+        description: |
           An absolute URI that identifies the specific occurrence of the problem.
           It may or may not yield further information if dereferenced.
-        example: >
-          /api/swico/softwarepartner/v1/biller/errors/NWPBCID0090000001/provided-X-CORRELATION-ID
+        example: |
+          /swp/v1/biller/errors/NWPBCID0090000001/provided-X-CORRELATION-ID
       technicalReason:
         type: string
         description: |
@@ -970,3 +1030,4 @@ definitions:
         type: string
         description: the version of the software partner api
         example: 1.0.23
+        
