@@ -14,7 +14,7 @@ info:
 
     If you notice any errors in this documentation or have any suggestions for improvements, we would be grateful to receive your feedback; please open an issue on our website.
 	 
-  version: 1.0.2-alpha
+  version: 1.0.2
   title: Software Partner API v1
   contact:
     name: 'Software Partner API'
@@ -1030,4 +1030,4 @@ definitions:
         type: string
         description: the version of the software partner api
         example: 1.0.23
-        
+	
