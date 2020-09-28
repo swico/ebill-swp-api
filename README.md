@@ -5,19 +5,16 @@ from an ERP to an _eBill Network Partner_ (as defined by SIX).
 
 ## Status
 
-This repository should be considered as _work in progress_. It shows what direction such an API
-could take. It is provided here only as a general information of the workgroup's reflections.
-Documents should by no means be used to implement code or draw conclusions.
-
-You are welcome to comment and/or discuss on the API by the way of _GitHub issues_.
+Version 1.0 is final as of Sept 28th 2020. Please feel free to ask questions or leave comments using _GitHub issues_.
 
 ## API definition
 
-The current draft recommendation (Version 0.7) for the API is available both in English and
-in German:
+The API is available both in English and in German:
 
-- [SIX eBill SWP API: Recommendation for the Interface between Software Manufacturers and Network Partners of SIX eBill](https://github.com/swico/ebill-swp-api/blob/master/documents/InterfaceRecommendationSIXeBill.pdf) &ndash; PDF document, Draft 0.7
-- [SIX eBill SWP API: Empfehlung für die Schnittstelle zwischen Softwareherstellern und Netzwerkpartnern der SIX eBill](https://github.com/swico/ebill-swp-api/blob/master/documents/SchnittstellenempfehlungSIXeBill.pdf) &ndash; PDF document, Draft 0.7
+
+
+- [SIX eBill SWP API: Recommendation for the Interface between Software Manufacturers and Network Partners of SIX eBill](https://github.com/swico/ebill-swp-api/blob/master/documents/InterfaceRecommendationSIXeBill-1.0.pdf) &ndash; PDF document, Version 1.0
+- [SIX eBill SWP API: Empfehlung für die Schnittstelle zwischen Softwareherstellern und Netzwerkpartnern der SIX eBill](https://github.com/swico/ebill-swp-api/blob/master/documents/SchnittstellenempfehlungSIXeBill-1.0.pdf) &ndash; PDF document, Version 1.0
 - [eBill-Softwarepartner zu Netzwerkpartner API Lizenz- und Nutzungsbedingungen](https://github.com/swico/ebill-swp-api/blob/master/LICENSE/Nutzungslizenz-SWP-API.pdf) &ndash; PDF document, Draft 0.5
 
 The API definition can be found as a Swagger YAML-file in folder `api` and viewed,
