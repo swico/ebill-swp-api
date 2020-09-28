@@ -13,9 +13,9 @@
 | `4112` | Crésus      | Epsitec |
 | `4114` | Billte      | |
 | `4130` | Conextrade  | Swisscom |
-| `4140` | Pentag (double entry for historical reasons)     | |
+| `4140` | Pentag      | |
 | `4142` | gate2b      | io-market |
-| `4150` | Pentag      | |
+| `4150` | Pentag (double entry for historical reasons) | |
 | `4177` | Swiss Post Solutions | |
 | `4180` | Reserved, this range could be used later for 6-digit NWP IDs.    | |
 |   :    | | |
