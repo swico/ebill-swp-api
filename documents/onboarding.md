@@ -1,4 +1,4 @@
-# Biller Onboarding (proposal)
+# Biller Onboarding
 
 A biller should be able to easily configure her software and specify all parameters
 required to communicate with the API.
