@@ -392,7 +392,7 @@ parameters:
     in: query
     type: string
     maxLength: 39
-    pattern: 'NWPD D[0-9A-Z]{32}'
+    pattern: 'NWPEVID[0-9A-Z]{32}'
     description: |
       Id of the last received event. If omitted, the result starts with the oldest available event.
       **Example**: `"NWPEVID82A65938766547EBBBA39BA6F7B07F24"`
