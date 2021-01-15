@@ -2,7 +2,7 @@
 
 Here's a list of all known participating NWPs.
 
-- Abacus: Ready, waiting for pilot customers
+- Abacus: In beta, ready for additional beta customers
 - Epsitec: In planning
 - InvoCLOUD/Nintu: In production
 
